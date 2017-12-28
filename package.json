@@ -1,0 +1,17 @@
+{
+  "name": "vidjot",
+  "version": "1.0.0",
+  "description": "App to create video ideas",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Brad Traversy",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.15.4",
+    "express-handlebars": "^3.0.0",
+    "mysql": "^2.15.0"
+  }
+}
