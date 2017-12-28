@@ -3,10 +3,8 @@ const exphbs  = require('express-handlebars');
 const bodyParser = require('body-parser');
 const app = express();
 
-//Load routes
-const projects = require('./routes/projects');
-const pages = require('./routes/pages');
-//Game
+
+//Routes
 const players = require('./routes/players');
 const rounds = require('./routes/rounds');
 const ranked = require('./routes/ranked');
