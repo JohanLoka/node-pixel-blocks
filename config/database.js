@@ -1,9 +1,9 @@
 if (process.env.NODE_ENV === 'production') {
   module.exports = {
-    host: "mysql.domain99.com",
-    user: "bloodybl",
-    password: "8e8UukSo18",
-    database: "bloodybl_wp"
+    host: "us-cdbr-iron-east-05.cleardb.net",
+    user: "b0641897008ce9",
+    password: "ba1be25e",
+    database: "heroku_2239e301724fcc2"
   }
 } else {
   module.exports = {
@@ -13,3 +13,5 @@ if (process.env.NODE_ENV === 'production') {
     database: "pixelblocks"
   }
 }
+
+//mysql://b0641897008ce9:ba1be25e@us-cdbr-iron-east-05.cleardb.net/heroku_2239e301724fcc2?reconnect=true
