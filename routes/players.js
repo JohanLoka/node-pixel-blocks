@@ -12,8 +12,19 @@ router.get('/', (req, res) => {
 });
 
 router.get('/admin/rollback', (req, res) => {
-return;//For security
   //Levels
+  con.query("SELECT MAX(score) AS best, id FROM players GROUP BY player_id", function(err, result, fields) {
+    if (err)
+      throw err;
+    result.map(player => {
+      var sql = `UPDATE players SET highscore=${player.best} WHERE id=${player.id}`;
+      con.query(sql, function(err, result, fields) {
+        console.log('Success updating highscore');
+      });
+    });
+
+  });
+
   con.query("SELECT COUNT(DISTINCT(level_title)) AS levelsCleared, player_id FROM progress GROUP BY player_id", function(err, result, fields) {
     if (err)
       throw err;
@@ -21,7 +32,7 @@ return;//For security
       var sql = `UPDATE players SET levels_completed=${player.levelsCleared} WHERE id=${player.player_id}`;
 
       con.query(sql, function(err, result, fields) {
-        res.send('Success updating levels');
+        console.log('Success updating levels');
       });
     });
 
