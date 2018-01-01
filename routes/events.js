@@ -2,6 +2,7 @@ const express = require('express');
 const con = require('../db');
 const router = express.Router();
 
+router.use(cors());
 //
 router.get('/', (req, res) => {
   con.query("SELECT * FROM events ORDER BY id DESC", function(err, result, fields) {
