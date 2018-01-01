@@ -1,5 +1,4 @@
 const express = require('express');
-const exphbs  = require('express-handlebars');
 const bodyParser = require('body-parser');
 const app = express();
 
@@ -23,6 +22,7 @@ app.use('/rounds', rounds);
 app.use('/ranked', ranked);
 app.use('/events', events);
 app.use('/maps', maps);
+
 const port = process.env.PORT || 5000;
 
 app.listen(port, () =>{
