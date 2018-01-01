@@ -30,6 +30,56 @@ router.post('/', (req, res) => {
   });
 });
 
+router.get('/daily/:id', (req, res) => {
+  const id = req.params.id;
+
+  var dt = new Date();
+  var month = dt.getMonth() + 1;
+  month = month >= 10
+    ? month
+    : "0" + month;
+
+  var day = dt.getDate();
+  day = day >= 10
+    ? day
+    : "0" + day;
+  var date = dt.getFullYear() + "-" + month + "-" + day;
+
+  var sql = `SELECT player_id FROM daily WHERE date='${date}' AND player_id=` + req.params.id;
+  con.query(sql, function(err, result, fields) {
+      var resp =  result.length > 0 ? 'ALLREADY_LOOTED' : 'NO_GAMES';
+      console.log(resp);
+    res.send(resp);
+  });
+});
+
+//Update progress for player
+router.post('/daily', (req, res) => {
+  var sql = "INSERT INTO daily (player_id, rank, date) VALUES ?";
+
+  var dt = new Date();
+  var month = dt.getMonth() + 1;
+  month = month >= 10
+    ? month
+    : "0" + month;
+
+  var day = dt.getDate();
+  day = day >= 10
+    ? day
+    : "0" + day;
+  var date = dt.getFullYear() + "-" + month + "-" + day;
+
+  var values = [
+    [req.body.id, req.body.rank, date]
+  ];
+  console.log(values);
+  con.query(sql, [values], function(err, result, fields) {
+    if (err)
+      res.send('Error inserting daily ' + err);
+    res.send('Success inserting daily');
+  });
+});
+
 router.get('/:id', (req, res) => {
   const id = req.params.id;
   con.query("SELECT * FROM events WHERE player_id=" + id, function(err, result, fields) {

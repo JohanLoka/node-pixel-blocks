@@ -7,21 +7,69 @@ const app = require('../app');
 
 //Todays best player
 router.get('/todays', (req, res) => {
-  console.log('todays!');
-  con.query("SELECT * FROM rounds ORDER BY score DESC LIMIT 1", function(err, result, fields) {
+  var dt = new Date();
+  var month = dt.getMonth() + 1;
+  month = month >= 10
+    ? month
+    : "0" + month;
+
+  var day = dt.getDate();
+  day = day >= 10
+    ? day
+    : "0" + day;
+  var date = dt.getFullYear() + "-" + month + "-" + day;
+
+  var sql = `SELECT score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${date}' AND ranked='True' ORDER BY score DESC LIMIT 1`;
+  con.query(sql, function(err, result, fields) {
     if (err)
       throw err;
-    res.send(result);
+      var items = [];
+      var arr = [];
+      result.forEach(function(row) {
+        var newarr = {
+          username: row.username,
+          score: row.score
+        }
+        arr.push(newarr);
+      });
+
+      items['items'] = arr;
+      console.log(arr[0]);
+      res.send(arr[0]);
   });
 });
 
 //Players best today
 router.get('/todays/:id', (req, res) => {
-  console.log('todays with ID: ' + req.params.id);
-  con.query("SELECT *, players.username, players.id FROM rounds INNER JOIN players ON players.id = rounds.player_id WHERE rounds.player_id=" + req.params.id + " ORDER BY score DESC LIMIT 1", function(err, result, fields) {
+  var dt = new Date();
+  var month = dt.getMonth() + 1;
+  month = month >= 10
+    ? month
+    : "0" + month;
+
+  var day = dt.getDate();
+  day = day >= 10
+    ? day
+    : "0" + day;
+  var date = dt.getFullYear() + "-" + month + "-" + day;
+
+  var sql = `SELECT score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${date}' AND ranked='True' AND rounds.player_id=${req.params.id} ORDER BY score DESC LIMIT 1`;
+  con.query(sql, function(err, result, fields) {
     if (err)
       throw err;
-    res.send(result);
+      var items = [];
+      var arr = [];
+      result.forEach(function(row) {
+        var newarr = {
+          username: row.username,
+          score: row.score
+        }
+        arr.push(newarr);
+      });
+
+      items['items'] = arr;
+      console.log(arr[0]);
+      res.send(arr[0]);
   });
 });
 
