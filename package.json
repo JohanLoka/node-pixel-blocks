@@ -8,5 +8,10 @@
   },
   "author": "Johan Lindberg",
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.15.4",
+    "mysql": "^2.15.0",
+    "npm": "^5.6.0"
+  }
 }
