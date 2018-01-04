@@ -21,8 +21,6 @@ app.use(function(req, res, next) {
   }
 });
 
-app.use(express.static(__dirname + '/public'));
-
 // Body parser middleware
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -37,10 +35,10 @@ app.use('/ranked', ranked);
 app.use('/events', events);
 app.use('/maps', maps);
 
-const port = process.env.PORT || 5000;
 
-app.listen(port, () => {
-  console.log(`Server started on port ${port}`);
-});
+app.set( 'port', ( process.env.PORT || 5000 ));
+app.listen( app.get( 'port' ), function() {
+  console.log( 'Node server is running on port ' + app.get( 'port' ));
+  });
 
 module.exports = app;
