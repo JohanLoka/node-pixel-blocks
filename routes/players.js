@@ -4,7 +4,7 @@ const router = express.Router();
 
 //
 router.get('/', (req, res) => {
-  con.query("SELECT * FROM players WHERE highscore > 0 ORDER BY highscore DESC", function(err, result, fields) {
+  pool.query("SELECT * FROM players WHERE highscore > 0 ORDER BY highscore DESC", function(err, result, fields) {
     if (err)
       throw err;
     res.send(result);
@@ -13,25 +13,25 @@ router.get('/', (req, res) => {
 
 router.get('/admin/rollback', (req, res) => {
   //Levels
-  con.query("SELECT MAX(score) AS best, id FROM players GROUP BY player_id", function(err, result, fields) {
+  pool.query("SELECT MAX(score) AS best, id FROM players GROUP BY player_id", function(err, result, fields) {
     if (err)
       throw err;
     result.map(player => {
       var sql = `UPDATE players SET highscore=${player.best} WHERE id=${player.id}`;
-      con.query(sql, function(err, result, fields) {
+      pool.query(sql, function(err, result, fields) {
         console.log('Success updating highscore');
       });
     });
 
   });
 
-  con.query("SELECT COUNT(DISTINCT(level_title)) AS levelsCleared, player_id FROM progress GROUP BY player_id", function(err, result, fields) {
+  pool.query("SELECT COUNT(DISTINCT(level_title)) AS levelsCleared, player_id FROM progress GROUP BY player_id", function(err, result, fields) {
     if (err)
       throw err;
     result.map(player => {
       var sql = `UPDATE players SET levels_completed=${player.levelsCleared} WHERE id=${player.player_id}`;
 
-      con.query(sql, function(err, result, fields) {
+      pool.query(sql, function(err, result, fields) {
         console.log('Success updating levels');
       });
     });
@@ -47,7 +47,7 @@ router.post('/update', (req, res) => {
 
   var sql = `UPDATE players SET highscore=${req.body.score} WHERE id=${req.body.id}`;
 
-  con.query(sql, function(err, result, fields) {
+  pool.query(sql, function(err, result, fields) {
     if (err)
       res.send('Error');
     res.send('Success updating Hs');
@@ -56,7 +56,7 @@ router.post('/update', (req, res) => {
 
 router.get('/:id', (req, res) => {
   const id = req.params.id;
-  con.query("SELECT * FROM players WHERE id=" + id, function(err, result, fields) {
+  pool.query("SELECT * FROM players WHERE id=" + id, function(err, result, fields) {
     if (err)
       throw err;
     res.send(result);

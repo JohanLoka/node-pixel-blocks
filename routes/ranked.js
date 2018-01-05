@@ -4,7 +4,7 @@ const router = express.Router();
 
 //Get all Ranks
 router.get('/', (req, res) => {
-  con.query("SELECT * FROM players", function(err, result, fields) {
+  pool.query("SELECT * FROM players", function(err, result, fields) {
     if (err)
       throw err;
     res.send(result);
@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
 //Get rank for player
 router.get('/:id', (req, res) => {
   const id = req.params.id;
-  con.query("SELECT * FROM players WHERE id=" + id, function(err, result, fields) {
+  pool.query("SELECT * FROM players WHERE id=" + id, function(err, result, fields) {
     if (err)
       throw err;
     res.send(result);
@@ -33,7 +33,7 @@ router.post('/progress', (req, res) => {
     [req.body.id, req.body.level, req.body.deaths, req.body.time_spent, date]
   ];
   console.log(values);
-  con.query(sql, [values], function(err, result, fields) {
+  pool.query(sql, [values], function(err, result, fields) {
     if (err)
       res.send('Error inserting progress ' + err);
     res.send('Success inserting progress');
