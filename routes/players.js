@@ -53,6 +53,31 @@ router.post('/update', (req, res) => {
     res.send('Success updating Hs');
   });
 });
+//Todays best
+router.post('/create', (req, res) => {
+  var values = [
+    [req.body.username]
+  ];
+  pool.query("SELECT username FROM players WHERE username=?", [values], function(err, result, fields) {
+
+    if (result.length > 0) {
+      res.send('taken');
+    } else {
+      var sql = "INSERT INTO players (username, created) VALUES ?";
+
+      var dt = new Date();
+      var date = dt.getFullYear() + "-" + (
+      dt.getMonth() + 1) + "-" + dt.getDate() + "  " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+
+      var values = [
+        [req.body.username, date]
+      ];
+      pool.query(sql, [values], function(err, result, fields) {
+        res.send(result.insertId);
+      });
+    }
+  });
+});
 
 router.get('/:id', (req, res) => {
   const id = req.params.id;
