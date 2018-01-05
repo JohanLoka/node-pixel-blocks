@@ -53,6 +53,7 @@ router.post('/update', (req, res) => {
     res.send('Success updating Hs');
   });
 });
+
 //Todays best
 router.post('/create', (req, res) => {
   var values = [
@@ -63,7 +64,7 @@ router.post('/create', (req, res) => {
     if (result.length > 0) {
       res.send('taken');
     } else {
-      var sql = "INSERT INTO players (username, created) VALUES ?";
+      var sql = "INSERT INTO players (username, joined) VALUES ?";
 
       var dt = new Date();
       var date = dt.getFullYear() + "-" + (
@@ -73,7 +74,9 @@ router.post('/create', (req, res) => {
         [req.body.username, date]
       ];
       pool.query(sql, [values], function(err, result, fields) {
-        res.send(result.insertId);
+        if (err)
+          throw err;
+        res.send('' + result.insertId);
       });
     }
   });
