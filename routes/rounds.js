@@ -91,7 +91,7 @@ router.get('/', (req, res) => {
       throw err;
     res.send(result);
   });
-  
+
 });
 
 //Todays best
