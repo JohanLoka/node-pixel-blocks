@@ -49,7 +49,6 @@ router.get('/daily/:id', (req, res) => {
   var sql = `SELECT player_id FROM daily WHERE date='${date}' AND player_id=` + req.params.id;
   pool.query(sql, function(err, result, fields) {
       var resp =  result.length > 0 ? 'ALLREADY_LOOTED' : 'NO_GAMES';
-      console.log(resp);
     res.send(resp);
   });
 });

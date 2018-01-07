@@ -22,10 +22,7 @@ router.get('/settings/:id', (req, res) => {
       }
       arr.push(newarr);
     });
-
     items['items'] = arr;
-    console.log(arr);
-
     res.send(arr);
   });
 });
@@ -45,14 +42,12 @@ router.get('/waves/:id', (req, res) => {
         score_to_advance: row.score_to_advance,
         enemy_count: row.enemy_count,
         medium_count: row.medium_count,
-        miniboss_count: row.miniboss_count
+        miniboss_count: row.miniboss_count,
+        boss_count: row.boss_count
       }
       arr.push(newarr);
     });
-
     items['items'] = arr;
-    console.log(items['items']);
-
     res.send(items['items']);
   });
 });
