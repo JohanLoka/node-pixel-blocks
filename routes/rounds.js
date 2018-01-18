@@ -5,8 +5,7 @@ const router = express.Router();
 
 const app = require('../app');
 
-//Todays best player
-router.get('/todays', (req, res) => {
+const date = () => {
   var dt = new Date();
   var month = dt.getMonth() + 1;
   month = month >= 10
@@ -18,6 +17,11 @@ router.get('/todays', (req, res) => {
     ? day
     : "0" + day;
   var date = dt.getFullYear() + "-" + month + "-" + day;
+  return date;
+};
+//Todays best player
+router.get('/todays', (req, res) => {
+
 
   var sql = `SELECT score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${date}' AND ranked='True' ORDER BY score DESC LIMIT 1`;
   pool.query(sql, function(err, result, fields) {

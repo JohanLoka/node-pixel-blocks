@@ -4,6 +4,7 @@ const router = express.Router();
 
 //
 //
+
 router.get('/settings/:id', (req, res) => {
   const id = `'${req.params.id}'`;
   pool.query("SELECT * FROM map_settings WHERE map_name=" + id, function(err, result, fields) {
@@ -49,6 +50,14 @@ router.get('/waves/:id', (req, res) => {
     });
     items['items'] = arr;
     res.send(items['items']);
+  });
+});
+
+router.get('/', (req, res) => {
+  pool.query("SELECT * FROM map_settings", function(err, result, fields) {
+    if (err)
+      throw err;
+    res.send(result);
   });
 });
 
