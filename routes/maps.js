@@ -5,6 +5,21 @@ const router = express.Router();
 //
 //
 
+//Todays best
+router.patch('/settings/:id', (req, res) => {
+    const id = `'${req.params.id}'`;
+  var sql = "UPDATE map_settings SET enemy_force= ? WHERE id="+ id;
+
+  var values = [
+    [req.body.enemy_force]
+  ];
+  pool.query(sql, [values], function(err, result, fields) {
+    if (err)
+      res.send(err);
+    res.send(result);
+  });
+});
+
 router.get('/settings/:id', (req, res) => {
   const id = `'${req.params.id}'`;
   pool.query("SELECT * FROM map_settings WHERE map_name=" + id, function(err, result, fields) {
