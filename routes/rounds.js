@@ -34,7 +34,7 @@ router.get('/todays', (req, res) => {
     : "0" + day;
   var date = dt.getFullYear() + "-" + month + "-" + day;
 
-  var sql = `SELECT score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${today}' AND ranked='True' ORDER BY score DESC LIMIT 1`;
+  var sql = `SELECT score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${date}' AND ranked='True' ORDER BY score DESC LIMIT 1`;
   pool.query(sql, function(err, result, fields) {
     if (err)
       throw err;
