@@ -2,6 +2,21 @@ const express = require('express');
 const pool = require('../db');
 const router = express.Router();
 
+const todayDate = () => {
+  var dt = new Date();
+  var month = dt.getMonth() + 1;
+  month = month >= 10 ?
+    month :
+    "0" + month;
+
+  var day = dt.getDate();
+  day = day >= 10 ?
+    day :
+    "0" + day;
+  var date = dt.getFullYear() + "-" + month + "-" + day;
+  return date;
+};
+
 //Get all Ranks
 router.get('/', (req, res) => {
   pool.query("SELECT * FROM players", function(err, result, fields) {

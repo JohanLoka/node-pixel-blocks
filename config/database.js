@@ -9,10 +9,10 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   module.exports = {
     connectionLimit : 100,
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "pixelblocks"
+    host: "us-cdbr-iron-east-05.cleardb.net",
+    user: "b5b3efd609fdb9",
+    password: "47ef201f",
+    database: "heroku_dc6bacb23343e74"
   }
 }
 
