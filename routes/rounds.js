@@ -74,40 +74,10 @@ router.get('/toplist/today', (req, res) => {
 
 //Top players all time
 router.get('/toplist', (req, res) => {
-
-  var date = todayDate();
-  items = [];
-  for (var i = 0; i < 10; i++) {
-
-    var d = new Date();
-    d.setDate(d.getDate() - i);
-    var date = formatDate(d);
-    var sql = `SELECT score, players.username AS username, SUBSTRING(rounds.date,1,10) AS date FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE rounds.date='${date}' ORDER BY score DESC LIMIT 1`;
+    var sql = `SELECT score, players.username AS username, SUBSTRING(rounds.date,1,10) AS date FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE ranked='True' ORDER BY score DESC LIMIT 5`;
     pool.query(sql, function(err, result, fields) {
-      result.forEach(function(row) {
-        var newarr = {
-          username: row.username,
-          score: row.score,
-          date: row.date
-        };
-        items.push(newarr);
-      });
+          res.send(result);
     });
-  }
-  //Ugly workaround for async call
-  setTimeout(function() {
-
-    items.sort(function(a, b){
-        var keyA = new Date(a.date),
-            keyB = new Date(b.date);
-        // Compare the 2 dates
-        if(keyA > keyB) return -1;
-        if(keyA < keyB) return 1;
-        return 0;
-    });
-
-    res.send(items);
-  }, 2000);
 });
 
 
