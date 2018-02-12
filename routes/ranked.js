@@ -19,7 +19,7 @@ const todayDate = () => {
 
 //Get all Ranks
 router.get('/', (req, res) => {
-  pool.query("SELECT * FROM players", function(err, result, fields) {
+  pool.query("SELECT *,  (SELECT COUNT(progress.id) FROM progress WHERE progress.player_id=players.id) AS levels_completed FROM players", function(err, result, fields) {
     if (err)
       throw err;
     res.send(result);
@@ -29,7 +29,7 @@ router.get('/', (req, res) => {
 //Get rank for player
 router.get('/:id', (req, res) => {
   const id = req.params.id;
-  pool.query("SELECT * FROM players WHERE id=" + id, function(err, result, fields) {
+  pool.query("SELECT *, (SELECT COUNT(id) FROM progress WHERE player_id="+ id + ") AS levels_completed FROM players WHERE id=" + id, function(err, result, fields) {
     if (err)
       throw err;
     res.send(result);
