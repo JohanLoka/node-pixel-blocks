@@ -63,7 +63,6 @@ router.get('/todays', (req, res) => {
 
 //Top players all time
 router.get('/toplist/today', (req, res) => {
-
   var date = todayDate();
 
   var sql = `SELECT MAX(score) AS score, players.username AS username, SUBSTRING(rounds.date,1,10) AS date FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE rounds.date='${date}' GROUP BY username ORDER BY score DESC LIMIT 5`;
@@ -74,7 +73,7 @@ router.get('/toplist/today', (req, res) => {
 
 //Top players all time
 router.get('/toplist', (req, res) => {
-    var sql = `SELECT score, players.username AS username, SUBSTRING(rounds.date,1,10) AS date FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE ranked='True' ORDER BY score DESC LIMIT 5`;
+    var sql = `SELECT MAX(score) AS score, players.username AS username, SUBSTRING(rounds.date,1,10) AS date FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE ranked='True' GROUP BY username ORDER BY score DESC LIMIT 5`;
     pool.query(sql, function(err, result, fields) {
           res.send(result);
     });
