@@ -69,7 +69,7 @@ router.get('/waves/:id', (req, res) => {
 });
 
 router.get('/', (req, res) => {
-  pool.query("SELECT * FROM map_settings", function(err, result, fields) {
+  pool.query("SELECT * FROM map_settings JOIN map_waves", function(err, result, fields) {
     if (err)
       throw err;
     res.send(result);

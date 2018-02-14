@@ -2,8 +2,22 @@ const express = require('express');
 const pool = require('../db');
 const router = express.Router();
 
+const todayDate = () => {
+  var dt = new Date();
+  var month = dt.getMonth() + 1;
+  month = month >= 10
+    ? month
+    : "0" + month;
 
-//
+  var day = dt.getDate();
+  day = day >= 10
+    ? day
+    : "0" + day;
+  var date = dt.getFullYear() + "-" + month + "-" + day;
+  return date;
+};
+
+//Get all events
 router.get('/', (req, res) => {
   pool.query("SELECT * FROM events ORDER BY id DESC", function(err, result, fields) {
     if (err)
@@ -15,10 +29,7 @@ router.get('/', (req, res) => {
 //Update progress for player
 router.post('/', (req, res) => {
   var sql = "INSERT INTO events (player_id, event_type, event_value, event_date) VALUES ?";
-
-  var dt = new Date();
-  var date = dt.getFullYear() + "/" + (
-  dt.getMonth() + 1) + "/" + dt.getDate() + "  " + dt.getHours() + "-" + dt.getMinutes() + "-" + dt.getSeconds();
+  const date = todayDate();
 
   var values = [
     [req.body.id, req.body.event_type, req.body.event_value, date]
@@ -34,21 +45,13 @@ router.post('/', (req, res) => {
 router.get('/daily/:id', (req, res) => {
   const id = req.params.id;
 
-  var dt = new Date();
-  var month = dt.getMonth() + 1;
-  month = month >= 10
-    ? month
-    : "0" + month;
-
-  var day = dt.getDate();
-  day = day >= 10
-    ? day
-    : "0" + day;
-  var date = dt.getFullYear() + "-" + month + "-" + day;
+  const date = todayDate();
 
   var sql = `SELECT player_id FROM daily WHERE date='${date}' AND player_id=` + req.params.id;
   pool.query(sql, function(err, result, fields) {
-      var resp =  result.length > 0 ? 'ALLREADY_LOOTED' : 'NO_GAMES';
+    var resp = result.length > 0
+      ? 'ALLREADY_LOOTED'
+      : 'NO_GAMES';
     res.send(resp);
   });
 });
@@ -57,17 +60,7 @@ router.get('/daily/:id', (req, res) => {
 router.post('/daily', (req, res) => {
   var sql = "INSERT INTO daily (player_id, rank, date) VALUES ?";
 
-  var dt = new Date();
-  var month = dt.getMonth() + 1;
-  month = month >= 10
-    ? month
-    : "0" + month;
-
-  var day = dt.getDate();
-  day = day >= 10
-    ? day
-    : "0" + day;
-  var date = dt.getFullYear() + "-" + month + "-" + day;
+  const date = todayDate();
 
   var values = [
     [req.body.id, req.body.rank, date]
