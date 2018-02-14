@@ -19,7 +19,7 @@ const todayDate = () => {
 
 //
 router.get('/', (req, res) => {
-  pool.query("SELECT *,  (SELECT COUNT(progress.id) FROM progress WHERE progress.player_id=players.id) AS levels_completed FROM players WHERE highscore > 0 ORDER BY highscore DESC", function(err, result, fields) {
+  pool.query("SELECT *,  (SELECT COUNT(DISTINCT(level_title)) FROM progress WHERE progress.player_id=players.id) AS levels_completed FROM players WHERE highscore > 0 ORDER BY highscore DESC", function(err, result, fields) {
     if (err)
       throw err;
     res.send(result);
