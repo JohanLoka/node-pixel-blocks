@@ -59,6 +59,40 @@ router.get('/todays', (req, res) => {
   });
 });
 
+const getYesterdaysDate = () => {
+    var date = new Date();
+    date.setDate(date.getDate()-1);
+    return date.getDate() + '.' + (date.getMonth()+1) + '.' + date.getFullYear();
+};
+
+//Todays best player
+router.get('/yesterday', (req, res) => {
+
+  var yester = new Date();
+  yester.setDate(yester.getDate()-1);
+
+  const date = formatDate(yester);
+
+  var sql = `SELECT score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${date}' AND ranked='True' ORDER BY score DESC LIMIT 1`;
+  pool.query(sql, function(err, result, fields) {
+    if (err)
+      throw err;
+
+    var items = [];
+    var arr = [];
+    result.forEach(function(row) {
+      var newarr = {
+        username: row.username,
+        score: row.score
+      }
+      arr.push(newarr);
+    });
+
+    items['items'] = arr;
+    res.send(arr[0]);
+  });
+});
+
 //Top players all time
 router.get('/toplist/today', (req, res) => {
   var date = todayDate();
