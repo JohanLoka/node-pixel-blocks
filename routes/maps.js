@@ -59,7 +59,8 @@ router.get('/waves/:id', (req, res) => {
         enemy_count: row.enemy_count,
         medium_count: row.medium_count,
         miniboss_count: row.miniboss_count,
-        boss_count: row.boss_count
+        boss_count: row.boss_count,
+        increase_difficulty: row.increase_difficulty
       }
       arr.push(newarr);
     });
