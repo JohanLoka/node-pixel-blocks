@@ -2,11 +2,10 @@ const express = require('express');
 const pool = require('../db');
 const router = express.Router();
 
-
 //Update settings
 router.patch('/settings/:id', (req, res) => {
-    const id = `'${req.params.id}'`;
-  var sql = "UPDATE map_settings SET enemy_force= ? WHERE id="+ id;
+  const id = `'${req.params.id}'`;
+  var sql = "UPDATE map_settings SET enemy_force= ? WHERE id=" + id;
 
   var values = [
     [req.body.enemy_force]
@@ -20,11 +19,11 @@ router.patch('/settings/:id', (req, res) => {
 
 //Update enemy count
 router.patch('/waves/:id', (req, res) => {
-    const id = `'${req.params.id}'`;
-  var sql = "UPDATE map_waves SET enemy_count= ? WHERE id="+ id;
+  const id = `'${req.params.id}'`;
+  var sql = "UPDATE map_waves SET score_to_advance = ?, enemy_count= ?, medium_count= ?, miniboss_count= ?, boss_count= ? WHERE id=" + id;
 
   var values = [
-    [req.body.enemy_count]
+    [req.body.score_to_advance, req.body.enemy_count, req.body.medium_count, req.body.miniboss_count, req.body.boss_count]
   ];
   pool.query(sql, [values], function(err, result, fields) {
     if (err)
