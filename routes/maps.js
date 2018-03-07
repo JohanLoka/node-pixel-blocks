@@ -19,17 +19,15 @@ router.patch('/settings/:id', (req, res) => {
 
 //Update enemy count
 router.patch('/waves/:id', (req, res) => {
-  const id = `'${req.params.id}'`;
-  var sql = "UPDATE map_waves SET score_to_advance = ?, enemy_count= ?, medium_count= ?, miniboss_count= ?, boss_count= ? WHERE id=" + id;
-
-  var values = [
-    [req.body.score_to_advance, req.body.enemy_count, req.body.medium_count, req.body.miniboss_count, req.body.boss_count]
-  ];
-  pool.query(sql, [values], function(err, result, fields) {
+  const id = `${req.params.id}`;
+  var sql = `UPDATE map_waves SET score_to_advance = ${req.body.score_to_advance}, enemy_count= ${req.body.enemy_count}, medium_count= ${req.body.medium_count}, miniboss_count= ${req.body.miniboss_count}, boss_count= ${req.body.boss_count} WHERE id=${id}`;
+  pool.query(sql, function(err, result, fields) {
     if (err)
       res.send(err);
-    res.send(result);
-  });
+    else
+      res.send(result);
+    }
+  );
 });
 
 //Used for ingame data getting
