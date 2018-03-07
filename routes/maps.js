@@ -2,10 +2,8 @@ const express = require('express');
 const pool = require('../db');
 const router = express.Router();
 
-//
-//
 
-//Todays best
+//Update settings
 router.patch('/settings/:id', (req, res) => {
     const id = `'${req.params.id}'`;
   var sql = "UPDATE map_settings SET enemy_force= ? WHERE id="+ id;
@@ -20,6 +18,22 @@ router.patch('/settings/:id', (req, res) => {
   });
 });
 
+//Update enemy count
+router.patch('/waves/:id', (req, res) => {
+    const id = `'${req.params.id}'`;
+  var sql = "UPDATE map_waves SET enemy_count= ? WHERE id="+ id;
+
+  var values = [
+    [req.body.enemy_count]
+  ];
+  pool.query(sql, [values], function(err, result, fields) {
+    if (err)
+      res.send(err);
+    res.send(result);
+  });
+});
+
+//Used for ingame data getting
 router.get('/settings/:id', (req, res) => {
   const id = `'${req.params.id}'`;
   pool.query("SELECT * FROM map_settings WHERE map_name=" + id, function(err, result, fields) {
@@ -43,6 +57,7 @@ router.get('/settings/:id', (req, res) => {
   });
 });
 
+//Used for ingame data getting
 router.get('/waves/:id', (req, res) => {
   const id = `'${req.params.id}'`;
   pool.query("SELECT * FROM map_waves WHERE map_name=" + id, function(err, result, fields) {
@@ -69,6 +84,16 @@ router.get('/waves/:id', (req, res) => {
   });
 });
 
+//Get all waves
+router.get('/waves', (req, res) => {
+  pool.query("SELECT * FROM map_waves", function(err, result, fields) {
+    if (err)
+      throw err;
+    res.send(result);
+  });
+});
+
+//Get all maps with settings
 router.get('/', (req, res) => {
   pool.query("SELECT * FROM map_settings", function(err, result, fields) {
     if (err)
