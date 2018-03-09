@@ -3,6 +3,20 @@ const pool = require('../db');
 const router = express.Router();
 
 //Update settings
+router.post('/waves', (req, res) => {
+  var sql = "INSERT INTO map_waves (map_name) VALUES ?";
+
+  var values = [
+    [req.body.map_name]
+  ];
+  pool.query(sql, [values], function(err, result, fields) {
+    if (err)
+      throw err;
+    res.send(result);
+  });
+});
+
+//Update settings
 router.patch('/settings/:id', (req, res) => {
   const id = `'${req.params.id}'`;
   var sql = "UPDATE map_settings SET enemy_force= ? WHERE id=" + id;
@@ -12,7 +26,7 @@ router.patch('/settings/:id', (req, res) => {
   ];
   pool.query(sql, [values], function(err, result, fields) {
     if (err)
-      res.send(err);
+      throw err;
     res.send(result);
   });
 });
@@ -22,12 +36,8 @@ router.patch('/waves/:id', (req, res) => {
   const id = `${req.params.id}`;
   var sql = `UPDATE map_waves SET score_to_advance = ${req.body.score_to_advance}, enemy_count= ${req.body.enemy_count}, medium_count= ${req.body.medium_count}, miniboss_count= ${req.body.miniboss_count}, boss_count= ${req.body.boss_count} WHERE id=${id}`;
   pool.query(sql, function(err, result, fields) {
-    if (err)
-      res.send(err);
-    else
-      res.send(result);
-    }
-  );
+    res.send(result);
+  });
 });
 
 //Used for ingame data getting

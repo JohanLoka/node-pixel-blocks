@@ -169,7 +169,6 @@ router.post('/', (req, res) => {
   var values = [
     [req.body.id, req.body.score, req.body.level, date, req.body.ranked]
   ];
-  console.log(values);
   pool.query(sql, [values], function(err, result, fields) {
     res.send(result);
   });
