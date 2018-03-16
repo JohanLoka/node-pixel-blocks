@@ -2,8 +2,8 @@ const express = require('express');
 const pool = require('../db');
 const router = express.Router();
 
-const todayDate = () => {
-  var dt = new Date();
+const formatDate = (input) => {
+  var dt = input;
   var month = dt.getMonth() + 1;
   month = month >= 10
     ? month
@@ -16,7 +16,6 @@ const todayDate = () => {
   var date = dt.getFullYear() + "-" + month + "-" + day;
   return date;
 };
-
 //Get all players progress
 router.get('/progression', (req, res) => {
   pool.query("SELECT *, players.username AS username FROM progress INNER JOIN players ON players.id=progress.player_id", function(err, result, fields) {
@@ -26,6 +25,61 @@ router.get('/progression', (req, res) => {
   });
 });
 
+//Get all players progress
+router.get('/daily/placement', (req, res) => {
+
+  var yester = new Date();
+  yester.setDate(yester.getDate() - 1);
+  const date = formatDate(yester);
+
+  var sql = `SELECT MAX(score) AS score,COUNT(score) AS count, players.username AS username FROM rounds
+  INNER JOIN players ON players.id=rounds.player_id
+  WHERE date='${date}' AND ranked='True' GROUP BY player_id ORDER BY score DESC`;
+
+  pool.query(sql, function(err, result, fields) {
+    if (err)
+      throw err;
+    let arr = [];
+    let placement = 1;
+    result.forEach(function(row) {
+      var obj = {
+        score: row.score,
+        username: row.username,
+        date: row.date,
+        rank: placement,
+        count: row.count
+      }
+      arr.push(obj);
+      placement++;
+    });
+    //SQL query here
+    //Insert into rankings
+    res.send(arr);
+  });
+});
+
+//Get reward from rankings
+router.get('/daily/:id', (req, res) => {
+  const id = req.params.id;
+  pool.query("SELECT * FROM rankings WHERE player_id= ? AND claimed = false", [id], function(err, result, fields) {
+    if (err)
+      throw err;
+      
+    var ranking = 0;
+    var status = 'NO GAMES';
+
+    if (result.length > 0) {
+      ranking = 1;
+      status = 'OK';
+    }
+
+    let resp = {
+      ranking,
+      status
+    };
+    res.send(resp);
+  });
+});
 
 //Get rank for player
 router.get('/:id', (req, res) => {
