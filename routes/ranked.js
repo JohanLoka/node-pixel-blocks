@@ -76,7 +76,7 @@ router.get('/rewards/calculate', (req, res) => {
 //Get reward from rankings for specidif player
 router.get('/rewards/:id', (req, res) => {
   const id = req.params.id;
-  pool.query("SELECT * FROM rewards WHERE player_id= ? AND claimed = 0", [id], function(err, result, fields) {
+  pool.query("SELECT * FROM rewards WHERE player_id= ?", [id], function(err, result, fields) {
     if (err)
       throw err;
 
@@ -92,6 +92,10 @@ router.get('/rewards/:id', (req, res) => {
     var status = result.length > 0
       ? 'OK'
       : 'NO GAMES';
+
+    status = result[0].claimed == 1
+      ? 'ALLREADY_LOOTED'
+      : status;
 
     let resp = {
       rank,
@@ -133,10 +137,10 @@ router.get('/', (req, res) => {
 });
 
 //Update rewards table
-router.post("/rewards/:id", (req, res) => {
-  const id = `'${req.params.id}'`;
-  var sql = "UPDATE rewards SET claimed= 1 WHERE player_id= " + id;
-  pool.query(sql, function(err, result, fields) {
+router.post("/rewards/update", (req, res) => {
+  const id = req.body.id;
+  var sql = "UPDATE rewards SET claimed= 1 WHERE player_id= ?";
+  pool.query(sql, [id], function(err, result, fields) {
     if (err)
       res.send('error');
     res.send('ok');
