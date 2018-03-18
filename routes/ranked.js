@@ -99,6 +99,7 @@ router.get('/rewards/:id', (req, res) => {
       score,
       players
     };
+
     res.send(resp);
   });
 });
@@ -128,6 +129,19 @@ router.get('/', (req, res) => {
     if (err)
       throw err;
     res.send(result);
+  });
+});
+
+//Update rewards table
+router.put("/rewards/:id", (req, res) => {
+  var sql = "UPDATE rewards SET claimed= true WHERE player_id= ?";
+  var values = [
+    [req.body.id]
+  ];
+  pool.query(sql, [req.body.id], function(err, result, fields) {
+    if (err)
+      res.send('error');
+    res.send('ok');
   });
 });
 
