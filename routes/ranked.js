@@ -93,10 +93,11 @@ router.get('/rewards/:id', (req, res) => {
       ? 'OK'
       : 'NO GAMES';
 
-    status = result[0].claimed == 1
-      ? 'ALLREADY_LOOTED'
-      : status;
-
+    if (result.length > 0) {
+      status = result[0].claimed == 1
+        ? 'ALLREADY_LOOTED'
+        : status;
+    }
     let resp = {
       rank,
       status,
