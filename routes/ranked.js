@@ -133,7 +133,7 @@ router.get('/', (req, res) => {
 });
 
 //Update rewards table
-router.put("/rewards/:id", (req, res) => {
+router.post("/rewards/:id", (req, res) => {
   var sql = "UPDATE rewards SET claimed= true WHERE player_id= ?";
   var values = [
     [req.body.id]
