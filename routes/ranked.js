@@ -135,8 +135,8 @@ router.get('/', (req, res) => {
 //Update rewards table
 router.post("/rewards/:id", (req, res) => {
   const id = `'${req.params.id}'`;
-  var sql = "UPDATE rewards SET claimed= 1 WHERE player_id= ?";
-  pool.query(sql, [id], function(err, result, fields) {
+  var sql = "UPDATE rewards SET claimed= 1 WHERE player_id= " + id;
+  pool.query(sql, function(err, result, fields) {
     if (err)
       res.send('error');
     res.send('ok');
