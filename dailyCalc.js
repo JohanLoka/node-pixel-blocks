@@ -57,6 +57,6 @@ WHERE date='${date}' AND ranked='True' GROUP BY player_id ORDER BY score DESC`;
         console.log('Player inserted: ' + row.player_id);
       });
     });
-    res.send(players + ' records inserted');
+    //res.send(players + ' records inserted');
   });
 });
