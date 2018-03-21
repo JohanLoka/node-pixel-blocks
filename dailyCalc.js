@@ -47,7 +47,7 @@ WHERE date='${date}' AND ranked='True' GROUP BY player_id ORDER BY score DESC`;
       arr.push(newArr);
       placement++;
     });
-    
+
     //Insert into rewards table
     arr.forEach(function(row) {
       var sql = "INSERT INTO rewards (player_id, rank, claimed, segment,score) VALUES ?";
@@ -60,11 +60,10 @@ WHERE date='${date}' AND ranked='True' GROUP BY player_id ORDER BY score DESC`;
     });
 
     var sql = "INSERT INTO events (player_id, event_type, event_value, event_date) VALUES ?";
-    const date = todayDate();
-
+    const date = formatDate(new Date());
     var hiddens = [
       [
-        0, 'Process', 'Rows inserted: ' + players,
+        0, 'Daily Reward Process', 'Rows inserted: ' + players,
         date
       ]
     ];
@@ -72,6 +71,5 @@ WHERE date='${date}' AND ranked='True' GROUP BY player_id ORDER BY score DESC`;
     pool.query(sql, [hiddens], function(err, result, fields) {
       console.log('Daily reward calculation complete!');
     });
-    //res.send(players + ' records inserted');
   });
 });
