@@ -54,7 +54,7 @@ router.get('/daily/placement', (req, res) => {
     });
     //SQL query here
     //Insert into rankings
-    res.send(arr);
+    //res.send(arr);
   });
 });
 
@@ -64,7 +64,7 @@ router.get('/daily/:id', (req, res) => {
   pool.query("SELECT * FROM rankings WHERE player_id= ? AND claimed = false", [id], function(err, result, fields) {
     if (err)
       throw err;
-      
+
     var ranking = 0;
     var status = 'NO GAMES';
 
