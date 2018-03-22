@@ -26,58 +26,95 @@ router.get('/progression', (req, res) => {
 });
 
 //Get all players progress
-router.get('/daily/placement', (req, res) => {
+router.get('/rewards/calculate', (req, res) => {
 
-  var yester = new Date();
-  yester.setDate(yester.getDate() - 1);
-  const date = formatDate(yester);
+  //Clear old rewards
+  pool.query("DELETE FROM rewards", function(err, result, fields) {
 
-  var sql = `SELECT MAX(score) AS score,COUNT(score) AS count, players.username AS username FROM rounds
+    var yester = new Date();
+    yester.setDate(yester.getDate() - 1);
+    const date = formatDate(yester);
+
+    let arr = [];
+
+    var sql = `SELECT rounds.player_id AS player_id, MAX(score) AS score, COUNT(DISTINCT(player_id)) AS count, players.username AS username FROM rounds
   INNER JOIN players ON players.id=rounds.player_id
   WHERE date='${date}' AND ranked='True' GROUP BY player_id ORDER BY score DESC`;
 
-  pool.query(sql, function(err, result, fields) {
-    if (err)
-      throw err;
-    let arr = [];
-    let placement = 1;
-    result.forEach(function(row) {
-      var obj = {
-        score: row.score,
-        username: row.username,
-        date: row.date,
-        rank: placement,
-        count: row.count
-      }
-      arr.push(obj);
-      placement++;
+    //Calclulate reward
+    pool.query(sql, function(err, result, fields) {
+      if (err)
+        throw err;
+      let placement = 1;
+
+      result.forEach(function(row) {
+        const players = row.count;
+        var newArr = {
+          player_id: row.player_id,
+          rank: placement,
+          segment: players,
+          score: row.score
+        }
+        arr.push(newArr);
+        placement++;
+      });
+      //Insert into rewards table
+      arr.forEach(function(row) {
+        var sql = "INSERT INTO rewards (player_id, rank, claimed, segment,score) VALUES ?";
+        var values = [
+          [row.player_id, row.rank, false, row.segment, row.score]
+        ];
+        pool.query(sql, [values], function(err, result, fields) {
+          console.log('Player inserted: ' + row.player_id);
+        });
+      });
+      res.send('Records Inserted');
     });
-    //SQL query here
-    //Insert into rankings
-    //res.send(arr);
   });
 });
 
-//Get reward from rankings
-router.get('/daily/:id', (req, res) => {
+//Get reward from rankings for specidif player
+router.get('/rewards/:id', (req, res) => {
   const id = req.params.id;
-  pool.query("SELECT * FROM rankings WHERE player_id= ? AND claimed = false", [id], function(err, result, fields) {
+  pool.query("SELECT * FROM rewards WHERE player_id= ?", [id], function(err, result, fields) {
     if (err)
       throw err;
 
-    var ranking = 0;
-    var status = 'NO GAMES';
+    var rank = result.length > 0
+      ? result[0].rank
+      : 0;
+    var players = result.length > 0
+      ? result[0].segment
+      : 0;
+    var score = result.length > 0
+      ? result[0].score
+      : 0;
+    var status = result.length > 0
+      ? 'OK'
+      : 'NO GAMES';
 
     if (result.length > 0) {
-      ranking = 1;
-      status = 'OK';
+      status = result[0].claimed == 1
+        ? 'ALLREADY_LOOTED'
+        : status;
     }
-
     let resp = {
-      ranking,
-      status
+      rank,
+      status,
+      score,
+      players
     };
+
     res.send(resp);
+  });
+});
+//Get all rewards
+router.get('/rewards', (req, res) => {
+  const id = req.params.id;
+  pool.query("SELECT * FROM rewards", function(err, result, fields) {
+    if (err)
+      throw err;
+    res.send(result);
   });
 });
 
@@ -97,6 +134,17 @@ router.get('/', (req, res) => {
     if (err)
       throw err;
     res.send(result);
+  });
+});
+
+//Update rewards table
+router.post("/rewards/update", (req, res) => {
+  const id = req.body.id;
+  var sql = "UPDATE rewards SET claimed= 1 WHERE player_id= ?";
+  pool.query(sql, [id], function(err, result, fields) {
+    if (err)
+      res.send('error');
+    res.send('ok');
   });
 });
 
