@@ -106,13 +106,13 @@ router.get('/live', (req, res) => {
   const date = `'${formatDate(new Date())}'`;
   let data = [];
 
-  pool.query('SELECT players.username AS username, event_type, event_value FROM events INNER JOIN players ON players.id = events.player_id WHERE event_date = ' + date + ' ORDER BY events.id DESC', function(err, result, fields) {
+  pool.query('SELECT players.username AS username, event_type AS type, event_value AS value FROM events INNER JOIN players ON players.id = events.player_id WHERE event_date = ' + date + ' ORDER BY events.id DESC', function(err, result, fields) {
     const events = {
       type: 'events',
       data: result
     };
     data.push(events);
-    pool.query('SELECT players.username AS username, score, level FROM rounds INNER JOIN players ON players.id = rounds.player_id WHERE date = ' + date + ' ORDER BY rounds.id DESC', function(err, result, fields) {
+    pool.query('SELECT players.username AS username, score AS value, level AS type FROM rounds INNER JOIN players ON players.id = rounds.player_id WHERE date = ' + date + ' ORDER BY rounds.id DESC', function(err, result, fields) {
       const rounds = {
         type: 'rounds',
         data: result
