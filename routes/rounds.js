@@ -115,21 +115,27 @@ router.get('/toplist', (req, res) => {
 router.get('/todays/:id', (req, res) => {
   const date = todayDate();
 
-  var sql = `SELECT score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${date}' AND ranked='True' AND rounds.player_id=${req.params.id} ORDER BY score DESC LIMIT 1`;
+  var sql = `SELECT score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${date}' AND ranked='True' AND rounds.player_id=${req.params.id} ORDER BY score`;
   pool.query(sql, function(err, result, fields) {
     if (err)
       throw err;
 
     var items = [];
     var arr = [];
-    result.forEach(function(row) {
+    if (result.length > 0) {
       var newarr = {
-        username: row.username,
-        score: row.score
-      }
-      arr.push(newarr);
-    });
-
+        username: result[0].username,
+        score: result[0].score,
+        count: result.length
+      };
+    } else {
+      var newarr = {
+        username: "NO_GAMES",
+        score: 0,
+        count: 0
+      };
+    }
+    arr.push(newarr);
     items['items'] = arr;
     res.send(arr[0]);
   });
