@@ -8,6 +8,7 @@ const rounds = require('./routes/rounds');
 const ranked = require('./routes/ranked');
 const events = require('./routes/events');
 const maps = require('./routes/maps');
+const dungeon = require('./routes/dungeon');
 
 app.use(function(req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -31,6 +32,7 @@ app.use('/rounds', rounds);
 app.use('/ranked', ranked);
 app.use('/events', events);
 app.use('/maps', maps);
+app.use('/dungeon', dungeon);
 
 
 app.set( 'port', ( process.env.PORT || 5000 ));
