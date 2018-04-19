@@ -60,16 +60,16 @@ router.get('/todays', (req, res) => {
 });
 
 const getYesterdaysDate = () => {
-    var date = new Date();
-    date.setDate(date.getDate()-1);
-    return date.getDate() + '.' + (date.getMonth()+1) + '.' + date.getFullYear();
+  var date = new Date();
+  date.setDate(date.getDate() - 1);
+  return date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear();
 };
 
 //Todays best player
 router.get('/yesterday', (req, res) => {
 
   var yester = new Date();
-  yester.setDate(yester.getDate()-1);
+  yester.setDate(yester.getDate() - 1);
 
   const date = formatDate(yester);
 
@@ -95,7 +95,7 @@ router.get('/yesterday', (req, res) => {
 
 //Top players all time
 router.get('/toplist/today', (req, res) => {
-  var date = todayDate();
+  var date = formatDate(new Date());
 
   var sql = `SELECT MAX(score) AS score, players.username AS username, SUBSTRING(rounds.date,1,10) AS date FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE rounds.date='${date}' GROUP BY username ORDER BY score DESC LIMIT 5`;
   pool.query(sql, function(err, result, fields) {
@@ -122,19 +122,18 @@ router.get('/todays/:id', (req, res) => {
 
     var items = [];
     var arr = [];
-    if (result.length > 0) {
-      var newarr = {
-        username: result[0].username,
-        score: result[0].score,
-        count: result.length
-      };
-    } else {
-      var newarr = {
-        username: "NO_GAMES",
-        score: 0,
-        count: 0
-      };
-    }
+
+    var newarr = {
+      username: result.length > 0
+        ? result[0].username
+        : "NO_GAMES",
+      score: result.length > 0
+        ? result[0].score
+        : 0,
+      count: result.length > 0
+        ? result.length
+        : 0
+    };
     arr.push(newarr);
     items['items'] = arr;
     res.send(arr[0]);
@@ -182,7 +181,7 @@ router.get('/', (req, res) => {
   });
 });
 
-//Todays best
+//Post new score
 router.post('/', (req, res) => {
   var sql = "INSERT INTO rounds (player_id, score, level, date, ranked) VALUES ?";
 
@@ -191,7 +190,6 @@ router.post('/', (req, res) => {
   var values = [
     [req.body.id, req.body.score, req.body.level, date, req.body.ranked]
   ];
-  console.log(values);
   pool.query(sql, [values], function(err, result, fields) {
     res.send(result);
   });
