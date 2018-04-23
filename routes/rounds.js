@@ -57,7 +57,7 @@ router.get('/todays/top', (req, res) => {
     });
 
     items['items'] = arr;
-    res.send(arr);
+    res.send(items['items']);
   });
 });
 
