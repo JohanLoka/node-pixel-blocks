@@ -35,29 +35,6 @@ const formatDate = (input) => {
   return date;
 };
 
-//Todays best player
-router.get('/todays', (req, res) => {
-  const date = todayDate();
-
-  var sql = `SELECT score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${date}' AND ranked='True' ORDER BY score DESC LIMIT 1`;
-  pool.query(sql, function(err, result, fields) {
-    if (err)
-      throw err;
-
-    var items = [];
-    var arr = [];
-    result.forEach(function(row) {
-      var newarr = {
-        username: row.username,
-        score: row.score
-      }
-      arr.push(newarr);
-    });
-
-    items['items'] = arr;
-    res.send(arr[0]);
-  });
-});
 
 //Todays best player
 router.get('/todays/top', (req, res) => {
@@ -83,6 +60,29 @@ router.get('/todays/top', (req, res) => {
   });
 });
 
+//Todays best player
+router.get('/todays', (req, res) => {
+  const date = todayDate();
+
+  var sql = `SELECT score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${date}' AND ranked='True' ORDER BY score DESC LIMIT 1`;
+  pool.query(sql, function(err, result, fields) {
+    if (err)
+      throw err;
+
+    var items = [];
+    var arr = [];
+    result.forEach(function(row) {
+      var newarr = {
+        username: row.username,
+        score: row.score
+      }
+      arr.push(newarr);
+    });
+
+    items['items'] = arr;
+    res.send(arr[0]);
+  });
+});
 const getYesterdaysDate = () => {
     var date = new Date();
     date.setDate(date.getDate()-1);
