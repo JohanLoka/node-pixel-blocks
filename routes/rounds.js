@@ -40,7 +40,7 @@ const formatDate = (input) => {
 router.get('/todays/top', (req, res) => {
   const date = todayDate();
 
-  var sql = `SELECT score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${date}' AND ranked='True' ORDER BY score DESC LIMIT 5`;
+  var sql = `SELECT player_id, MAX(score) AS score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${date}' AND ranked='True' GROUP BY player_id ORDER BY score DESC LIMIT 5`;
   pool.query(sql, function(err, result, fields) {
     if (err)
       throw err;
@@ -56,7 +56,7 @@ router.get('/todays/top', (req, res) => {
     });
 
     items['items'] = arr;
-    res.send(arr[0]);
+    res.send(arr);
   });
 });
 
