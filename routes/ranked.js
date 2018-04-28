@@ -65,7 +65,7 @@ router.get('/map', (req, res) => {
   pool.query("SELECT enemy_force AS map_id FROM map_settings WHERE map_name='DailyDungeon' LIMIT 1", function(err, result, fields) {
     if (err)
       throw err;
-    res.send({map_id: result.map_id});
+    res.send({map_id: result[0].map_id});
   });
 });
 

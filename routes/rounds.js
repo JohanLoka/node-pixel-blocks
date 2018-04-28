@@ -46,7 +46,8 @@ router.get('/todays', (req, res) => {
     result.forEach(function(row) {
       var newarr = {
         username: row.username,
-        score: row.score
+        score: row.score,
+        count: 0
       }
       arr.push(newarr);
     });
