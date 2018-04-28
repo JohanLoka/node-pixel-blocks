@@ -1,21 +1,7 @@
 const express = require('express');
 const pool = require('../db');
 const router = express.Router();
-
-const todayDate = () => {
-  var dt = new Date();
-  var month = dt.getMonth() + 1;
-  month = month >= 10
-    ? month
-    : "0" + month;
-
-  var day = dt.getDate();
-  day = day >= 10
-    ? day
-    : "0" + day;
-  var date = dt.getFullYear() + "-" + month + "-" + day;
-  return date;
-};
+const formatDate = require('../lib/date');
 
 //Get all events
 router.get('/', (req, res) => {
@@ -29,7 +15,7 @@ router.get('/', (req, res) => {
 //Update progress for player
 router.post('/', (req, res) => {
   var sql = "INSERT INTO events (player_id, event_type, event_value, event_date) VALUES ?";
-  const date = todayDate();
+  const date = formatDate(new Date());
 
   var values = [
     [req.body.id, req.body.event_type, req.body.event_value, date]
@@ -45,7 +31,7 @@ router.post('/', (req, res) => {
 router.get('/daily/:id', (req, res) => {
   const id = req.params.id;
 
-  const date = todayDate();
+  const date = formatDate(new Date());
 
   var sql = `SELECT player_id FROM daily WHERE date='${date}' AND player_id=` + req.params.id;
   pool.query(sql, function(err, result, fields) {
@@ -60,7 +46,7 @@ router.get('/daily/:id', (req, res) => {
 router.post('/daily', (req, res) => {
   var sql = "INSERT INTO daily (player_id, rank, date) VALUES ?";
 
-  const date = todayDate();
+  const date = formatDate(new Date());
 
   var values = [
     [req.body.id, req.body.rank, date]

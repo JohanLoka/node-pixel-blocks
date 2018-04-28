@@ -1,21 +1,7 @@
 const express = require('express');
 const pool = require('../db');
 const router = express.Router();
-
-const todayDate = () => {
-  var dt = new Date();
-  var month = dt.getMonth() + 1;
-  month = month >= 10
-    ? month
-    : "0" + month;
-
-  var day = dt.getDate();
-  day = day >= 10
-    ? day
-    : "0" + day;
-  var date = dt.getFullYear() + "-" + month + "-" + day;
-  return date;
-};
+const formatDate = require('../lib/date');
 
 //
 router.get('/', (req, res) => {
@@ -29,7 +15,7 @@ router.get('/', (req, res) => {
 //Todays best
 router.post('/update', (req, res) => {
 
-  const date = todayDate();
+  const date = formatDate(new Date());
   var sql = `UPDATE players SET highscore=${req.body.score}, updated=${date} WHERE id=${req.body.id}`;
 
   pool.query(sql, function(err, result, fields) {
@@ -51,7 +37,7 @@ router.post('/create', (req, res) => {
     } else {
 
       var sql = "INSERT INTO players (username, joined) VALUES ?";
-      const date = todayDate();
+      const date = formatDate(new Date());
       var values = [
         [req.body.username, date]
       ];

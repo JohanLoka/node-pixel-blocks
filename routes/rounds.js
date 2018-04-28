@@ -4,43 +4,14 @@ const bodyParser = require('body-parser');
 const router = express.Router();
 
 const app = require('../app');
-
-const todayDate = () => {
-  var dt = new Date();
-  var month = dt.getMonth() + 1;
-  month = month >= 10
-    ? month
-    : "0" + month;
-
-  var day = dt.getDate();
-  day = day >= 10
-    ? day
-    : "0" + day;
-  var date = dt.getFullYear() + "-" + month + "-" + day;
-  return date;
-};
-
-const formatDate = (input) => {
-  var dt = input;
-  var month = dt.getMonth() + 1;
-  month = month >= 10
-    ? month
-    : "0" + month;
-
-  var day = dt.getDate();
-  day = day >= 10
-    ? day
-    : "0" + day;
-  var date = dt.getFullYear() + "-" + month + "-" + day;
-  return date;
-};
+const format = require('../lib/date');
 
 
 //Todays best player
 router.get('/todays/top', (req, res) => {
-  const date = todayDate();
+  const today = format(new Date());
 
-  var sql = `SELECT player_id, MAX(score) AS score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${date}' AND ranked='True' GROUP BY player_id ORDER BY score DESC LIMIT 5`;
+  var sql = `SELECT player_id, MAX(score) AS score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${today}' AND ranked='True' GROUP BY player_id ORDER BY score DESC LIMIT 5`;
   pool.query(sql, function(err, result, fields) {
     if (err)
       throw err;
@@ -63,9 +34,9 @@ router.get('/todays/top', (req, res) => {
 
 //Todays best player
 router.get('/todays', (req, res) => {
-  const date = todayDate();
+  const today = format(new Date());
 
-  var sql = `SELECT score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${date}' AND ranked='True' ORDER BY score DESC LIMIT 1`;
+  var sql = `SELECT score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${today}' AND ranked='True' ORDER BY score DESC LIMIT 1`;
   pool.query(sql, function(err, result, fields) {
     if (err)
       throw err;
@@ -84,11 +55,6 @@ router.get('/todays', (req, res) => {
     res.send(arr[0]);
   });
 });
-const getYesterdaysDate = () => {
-    var date = new Date();
-    date.setDate(date.getDate()-1);
-    return date.getDate() + '.' + (date.getMonth()+1) + '.' + date.getFullYear();
-};
 
 //Todays best player
 router.get('/yesterday', (req, res) => {
@@ -96,7 +62,7 @@ router.get('/yesterday', (req, res) => {
   var yester = new Date();
   yester.setDate(yester.getDate()-1);
 
-  const date = formatDate(yester);
+  const date = format(yester);
 
   var sql = `SELECT score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${date}' AND ranked='True' ORDER BY score DESC LIMIT 1`;
   pool.query(sql, function(err, result, fields) {
@@ -120,7 +86,7 @@ router.get('/yesterday', (req, res) => {
 
 //Top players all time
 router.get('/toplist/today', (req, res) => {
-  var date = todayDate();
+  const date = format(new Date());
 
   var sql = `SELECT MAX(score) AS score, players.username AS username, SUBSTRING(rounds.date,1,10) AS date FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE rounds.date='${date}' GROUP BY username ORDER BY score DESC LIMIT 5`;
   pool.query(sql, function(err, result, fields) {
@@ -138,7 +104,7 @@ router.get('/toplist', (req, res) => {
 
 //Players best today
 router.get('/todays/:id', (req, res) => {
-  const date = todayDate();
+  const date = format(new Date());
 
   var sql = `SELECT score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${date}' AND ranked='True' AND rounds.player_id=${req.params.id} ORDER BY score`;
   pool.query(sql, function(err, result, fields) {
@@ -189,7 +155,7 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
   var sql = "INSERT INTO rounds (player_id, score, level, date, ranked) VALUES ?";
 
-  const date = todayDate();
+  const date = format(new Date());
 
   var values = [
     [req.body.id, req.body.score, req.body.level, date, req.body.ranked]

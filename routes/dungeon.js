@@ -4,21 +4,7 @@ const bodyParser = require('body-parser');
 const router = express.Router();
 
 const app = require('../app');
-
-const formatDate = (input) => {
-  var dt = input;
-  var month = dt.getMonth() + 1;
-  month = month >= 10
-    ? month
-    : "0" + month;
-
-  var day = dt.getDate();
-  day = day >= 10
-    ? day
-    : "0" + day;
-  var date = dt.getFullYear() + "-" + month + "-" + day;
-  return date;
-};
+const formatDate = require('../lib/date');
 
 //Get all rounds for this player
 router.get('/:id', (req, res) => {
