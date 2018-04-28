@@ -3,6 +3,7 @@ const pool = require('../db');
 const router = express.Router();
 const formatDate = require('../lib/date');
 
+
 //Get all players progress
 router.get('/progression', (req, res) => {
   pool.query("SELECT *, players.username AS username FROM progress INNER JOIN players ON players.id=progress.player_id", function(err, result, fields) {
@@ -11,6 +12,7 @@ router.get('/progression', (req, res) => {
     res.send(result);
   });
 });
+
 
 //Get reward from rankings for specidif player
 router.get('/rewards/:id', (req, res) => {
@@ -63,7 +65,7 @@ router.get('/map', (req, res) => {
   pool.query("SELECT enemy_force AS map_id FROM map_settings WHERE map_name='DailyDungeon' LIMIT 1", function(err, result, fields) {
     if (err)
       throw err;
-    res.send(result);
+    res.send({map_id: result.map_id});
   });
 });
 
@@ -73,7 +75,7 @@ router.get('/:id', (req, res) => {
   pool.query("SELECT *, (SELECT COUNT(DISTINCT(level_title)) FROM progress WHERE player_id=" + id + ") AS levels_completed FROM players WHERE id=" + id, function(err, result, fields) {
     if (err)
       throw err;
-    res.send({map_id: result.map_id});
+    res.send(result);
   });
 });
 
