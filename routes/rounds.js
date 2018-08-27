@@ -1,9 +1,7 @@
 const express = require('express');
 const pool = require('../db');
-const bodyParser = require('body-parser');
 const router = express.Router();
 
-const app = require('../app');
 const format = require('../lib/date');
 
 
@@ -85,7 +83,7 @@ router.get('/yesterday', (req, res) => {
   });
 });
 
-//Top players all time
+//Top players today
 router.get('/toplist/today', (req, res) => {
   const date = format(new Date());
 

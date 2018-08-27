@@ -10,6 +10,9 @@ const events = require('./routes/events');
 const maps = require('./routes/maps');
 const dungeon = require('./routes/dungeon');
 
+//  v2
+const procedural = require('./routes_v2/procedural');
+
 app.use(function(req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -33,6 +36,9 @@ app.use('/ranked', ranked);
 app.use('/events', events);
 app.use('/maps', maps);
 app.use('/dungeon', dungeon);
+
+//  v2
+app.use('/procedural', procedural);
 
 app.set('port', (process.env.PORT || 5000));
 app.listen(app.get('port'), function() {
