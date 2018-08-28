@@ -1,7 +1,7 @@
 const express = require('express');
 const pool = require('../db');
 const router = express.Router();
-const formatDate = require('../lib/date');
+const { today } = require('../lib/date');
 
 
 //Get all players progress
@@ -102,9 +102,8 @@ router.post("/rewards/update", (req, res) => {
 //Insert progress for player
 router.post('/progress', (req, res) => {
   var sql = "INSERT INTO progress (player_id, level_title, deaths, time_spent, date_cleared) VALUES ?";
-  var date = formatDate(new Date());
   var values = [
-    [req.body.id, req.body.level, req.body.deaths, req.body.time_spent, date]
+    [req.body.id, req.body.level, req.body.deaths, req.body.time_spent, today]
   ];
   pool.query(sql, [values], function(err, result, fields) {
     if (err)
