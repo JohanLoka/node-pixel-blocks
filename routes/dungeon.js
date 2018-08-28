@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const router = express.Router();
 
 const app = require('../app');
-const formatDate = require('../lib/date');
+const { today } = require('../lib/date');
 
 //Get all rounds for this player
 router.get('/:id', (req, res) => {
@@ -29,10 +29,8 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
   var sql = "INSERT INTO dungeon (player_id, floor, level, date, tier) VALUES ?";
 
-  const date = formatDate(new Date());
-
   var values = [
-    [req.body.id, req.body.floor, req.body.level, date, req.body.tier]
+    [req.body.id, req.body.floor, req.body.level, today, req.body.tier]
   ];
   pool.query(sql, [values], function(err, result, fields) {
     res.send(result);
