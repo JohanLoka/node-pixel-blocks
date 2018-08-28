@@ -1,7 +1,7 @@
 const express = require('express');
 const pool = require('../db');
 const router = express.Router();
-const formatDate = require('../lib/date');
+const { today } = require('../lib/date');
 
 
 //Update settings
