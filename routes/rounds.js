@@ -2,13 +2,12 @@ const express = require('express');
 const pool = require('../db');
 const router = express.Router();
 
-const format = require('../lib/date');
+const { today, yesterday } = require('../lib/date');
 
 
 //Todays best player
 router.get('/todays/top', (req, res) => {
-  const today = format(new Date());
-
+  
   var sql = `SELECT player_id, MAX(score) AS score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${today}' AND ranked='True' GROUP BY player_id ORDER BY score DESC LIMIT 5`;
   pool.query(sql, function(err, result, fields) {
     if (err)
@@ -32,8 +31,7 @@ router.get('/todays/top', (req, res) => {
 
 //Todays best player
 router.get('/todays', (req, res) => {
-  const today = format(new Date());
-
+  
   var sql = `SELECT score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${today}' AND ranked='True' ORDER BY score DESC LIMIT 1`;
   pool.query(sql, function(err, result, fields) {
     if (err)
@@ -58,12 +56,7 @@ router.get('/todays', (req, res) => {
 //Todays best player
 router.get('/yesterday', (req, res) => {
 
-  var yester = new Date();
-  yester.setDate(yester.getDate()-1);
-
-  const date = format(yester);
-
-  var sql = `SELECT score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${date}' AND ranked='True' ORDER BY score DESC LIMIT 1`;
+  var sql = `SELECT score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${yesterday}' AND ranked='True' ORDER BY score DESC LIMIT 1`;
   pool.query(sql, function(err, result, fields) {
     if (err)
       throw err;
@@ -85,9 +78,8 @@ router.get('/yesterday', (req, res) => {
 
 //Top players today
 router.get('/toplist/today', (req, res) => {
-  const date = format(new Date());
-
-  var sql = `SELECT MAX(score) AS score, players.username AS username, SUBSTRING(rounds.date,1,10) AS date FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE rounds.date='${date}' GROUP BY username ORDER BY score DESC LIMIT 5`;
+  
+  var sql = `SELECT MAX(score) AS score, players.username AS username, SUBSTRING(rounds.date,1,10) AS date FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE rounds.date='${today}' GROUP BY username ORDER BY score DESC LIMIT 5`;
   pool.query(sql, function(err, result, fields) {
     res.send(result);
   });
@@ -103,9 +95,8 @@ router.get('/toplist', (req, res) => {
 
 //Players best today
 router.get('/todays/:id', (req, res) => {
-  const date = format(new Date());
 
-  var sql = `SELECT score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${date}' AND ranked='True' AND rounds.player_id=${req.params.id} ORDER BY score`;
+  var sql = `SELECT score, players.username AS username FROM rounds INNER JOIN players ON players.id=rounds.player_id WHERE date='${today}' AND ranked='True' AND rounds.player_id=${req.params.id} ORDER BY score`;
   pool.query(sql, function(err, result, fields) {
     if (err)
       throw err;
@@ -154,10 +145,8 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
   var sql = "INSERT INTO rounds (player_id, score, level, date, ranked) VALUES ?";
 
-  const date = format(new Date());
-
   var values = [
-    [req.body.id, req.body.score, req.body.level, date, req.body.ranked]
+    [req.body.id, req.body.score, req.body.level, today, req.body.ranked]
   ];
   pool.query(sql, [values], function(err, result, fields) {
     res.send(result);
