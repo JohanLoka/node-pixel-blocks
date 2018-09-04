@@ -68,7 +68,7 @@ router.get("/alltime", (req, res) => {
 //  Get all rounds today
 router.get("/today/:id", (req, res) => {
   const id = req.params.id;
-  const sql = `SELECT COUNT(player_id) AS count FROM proc_rounds WHERE date = {today} AND player_id = ?`;
+  const sql = `SELECT COUNT(player_id) AS count FROM proc_rounds WHERE date = ${today} AND player_id = ?`;
 
   pool.query(sql, [id], (err, result, fields) => {
     const count = result[0];
